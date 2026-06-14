@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>VR 幼儿园 - 室外草地</title>
+  
+  <script src="https://cdn.jsdelivr.net/npm/webxr-polyfill@latest/build/webxr-polyfill.js"></script>
+  <script>if (window.WebXRPolyfill) new WebXRPolyfill();</script>
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+  
+  <link rel="prefetch" href="inner.html">
+
+  <style>
+    #proximity-hint {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999;
+      padding: 12px 24px; background: rgba(255, 152, 0, 0.92); backdrop-filter: blur(10px);
+      border-radius: 30px; color: #ffffff; font-size: 16px; font-weight: bold;
+      letter-spacing: 1px; display: none; pointer-events: none;
+    }
+    /* 黑屏过渡蒙版（默认不透明度为1，即全黑，靠JS变透明） */
+    #fade-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: #000; opacity: 1; pointer-events: none;
+      transition: opacity 0.5s ease; z-index: 99999;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="fade-overlay"></div>
+  <div id="proximity-hint">⏳ 靠近中...</div>
+
+  <div id="portrait-warning">
+    <div class="phone-icon">📱</div>
+    <h2>请旋转手机</h2>
+    <p style="color: #ccc; font-size: 14px;">为了获得最佳 VR 体验，请将手机横屏使用</p>
+  </div>
+
+  <a-scene background="color: #FFFDF9" renderer="antialias: true; colorManagement: true" vr-mode-ui="enabled: true" gltf-model="dracoDecoderPath: https://cdn.jsdelivr.net/npm/three@0.164.0/examples/jsm/libs/draco/gltf/;">
+    
+    <a-assets id="scene-assets">
+      <a-asset-item id="child" src="./assets/child.glb"></a-asset-item>     
+      <a-asset-item id="apple" src="./assets/apple.glb"></a-asset-item>
+      <img id="outer-sky" src="./assets/grass.jpg" /> 
+    </a-assets>
+
+    <a-ambient-light intensity="1.0" color="#ffffff"></a-ambient-light>
+    <a-directional-light position="0 30 10" intensity="0.6" color="#ffffff"></a-directional-light>
+
+    <a-entity id="rig" position="0 -0.3 16" rotation="0 180 0">
+      <a-camera look-controls>
+        <a-cursor raycaster="objects: .gaze-target; interval: 100" geometry="primitive: ring; radiusInner: 0.015; radiusOuter: 0.025" material="color: #FF69B4; shader: flat"></a-cursor>
+      </a-camera>
+    </a-entity>
+
+    <a-sky src="#outer-sky" rotation="0 -90 0"></a-sky>
+
+    <a-entity gltf-model="#apple" position="0 -1 0" scale="10 10 10"></a-entity>
+    <a-sphere class="gaze-target" data-switch-target="apple" position="0 1.2 0" radius="3.2" material="color: #ffffff; transparent: true; opacity: 0.0"></a-sphere>
+
+    <a-entity gltf-model="#child" position="-4 -1 -5" scale="8 8 8"></a-entity>
+  </a-scene>
+
+  <script src="script.js"></script>
+</body>
+</html>
